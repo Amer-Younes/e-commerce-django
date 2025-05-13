@@ -1,0 +1,267 @@
+﻿{% extends 'partials/base.html' %}
+{% load static %}
+
+{% load mathfilters %}
+    
+
+{% block content %}
+    
+
+
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Shop
+                    <span></span> Checkout
+                </div>
+            </div>
+        </div>
+        <div class="container mb-80 mt-50">
+            <div class="row">
+                <div class="col-lg-8 mb-40">
+                    <h1 class="heading-2 mb-10">Checkout</h1>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-body">There are <span class="text-brand">{{totalCartItems}}</span> products in your cart</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row mb-50">
+
+
+                        
+                    </div>
+                    <div class="row">
+                        
+                        <form method="post">
+                            <div class="row">
+                                <div class="table-responsive shopping-summery">
+                                    <table class="table table-wishlist">
+                                        <thead>
+                                            <tr class="main-heading">
+
+                                                <th scope="col" >Product</th>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Unit Price</th>
+                                                <th scope="col">Quantity</th>
+                                                <th scope="col">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                            {% for product in order_items %}
+                                            <tr class="pt-30">
+                                                <td class="image product-thumbnail pt-40"><img src="{{ product.image }}" alt="#"></td>
+                                                <td class="product-des product-name">
+                                                    <h6 class="mb-5"><a class="product-name mb-10 text-heading" >{{product.item}}</a></h6>
+                                                </td>
+                                                <td class="price" data-title="Price">
+                                                    <h4 class="text-body">${{product.price |floatformat:2}} </h4>
+                                                </td>
+                                                <td class="text-center detail-info" data-title="Stock">
+                                                    <div class="detail-extralink mr-15">
+                                                        <div class="detail-qty border radius">
+                                                            {% comment %} <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a> {% endcomment %}
+                                                            <h4 class="text-body">{{product.qty}} </h4>
+                                                            {% comment %} <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a> {% endcomment %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="price" data-title="Price">
+                                                    <h4 class="text-brand">${{ product.price|mul:product.qty|floatformat:2 }} </h4>
+                                                </td>
+                                                </tr>
+                                            {% endfor %}
+                                                
+            
+            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="border p-40 cart-totals ml-30 mb-50">
+                        <div class="d-flex align-items-end justify-content-between mb-30">
+                            <h4>Order Summary</h4>
+                        </div>
+                        <table class="table no-border">
+                            <tbody>
+
+                                <tr>
+                                    <td scope="col" colspan="2">
+                                        <div class="divider-2 mt-10 mb-10"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Shipping</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h5 class="text-heading text-end">$0.00</h4></td> </tr> <tr>
+
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Tax</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h5 class="text-heading text-end">$0.00</h4></td> </tr> <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Discount</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h5 class="text-heading text-end">${{order.saved}}</h4></td> </tr> <tr>
+                                    <td scope="col" colspan="2">
+                                        <div class="divider-2 mt-10 mb-10"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h4 class="text-brand text-end">${{order.price|floatformat:2}}</h4>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="divider-2 mb-30"></div>
+                        
+                        <div class="table-responsive order_table checkout">
+                            <table class="table no-border">
+                                <tbody>
+                                    
+                                    {% for product_id , item in cart_data.items %}
+                                        
+                                    <tr>
+                                        <td class="image product-thumbnail"><img src="{{item.image}}" alt="#"></td>
+                                        <td>
+                                            <h6 class="w-160 mb-5"><a href="{% url 'core:product-detail' item.pid%}" class="text-heading">{{item.title}}</a></h6></span>
+                                            <div class="product-rate-cover">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h6 class="text-muted pl-20 pr-20">x {{item.qty}}</h6>
+                                        </td>
+                                        <td>
+                                            <h5 class="text-muted">${{ item.price|floatformat:2 }}</h5>
+                                        </td>
+                                        <td>
+                                            <h4 class="text-brand">${{ item.price|mul:item.qty|floatformat:2 }}</h4>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="payment ml-30">
+                        <div class="col-lg-12 mb-30">
+                            <form method="post" class="apply-coupon">
+                                {% csrf_token %}
+                                <input type="text" name="code" placeholder="Enter Coupon Code...">
+                                <button class="btn  btn-md" type="submit" name="code-btn">Apply Coupon</button>
+                            </form>
+                        </div>
+                        <h4 class="mb-30">Payment</h4>
+                        
+                        <div class="payment-logo d-flex">
+                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-paypal.svg' %}" alt="">
+                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-visa.svg' %}" alt="">
+                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-master.svg' %}" alt="">
+                            <img src="{% static 'assets/imgs/theme/icons/payment-zapper.svg' %}" alt="">
+                            
+                        </div>
+                        <div class="m-5 ml-0 col-lg-12 ">
+                            <button type="button" id="checkout-button" class="btn btn-success w-100 ">Pay with stripe</button>
+                            
+                        </div>
+                        <div id="paypal-button-container"  style="margin-top: 20px;">
+                            {{paypal_payment_button.render}}
+                        </div>
+                        {% comment %} <a href="#" class="btn btn-fill-out btn-block mt-30">Place an Order<i class="fi-rs-sign-out ml-15"></i></a> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AdbGPRnx1CyATd9A-z1mZKGQUUzhT3ugXuJ0S_pIRMwlIsuPERtz0QanVsCsRYjgdXDHXSzn5yC-LAER&currency=USD"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        
+        paypal.Buttons({
+            createOrder : function(data, actions){
+                return actions.order.create({
+                    purchase_units : [{
+                        amount : {
+                            value : "{{order.price}}"
+                        }
+                    }]
+                })
+            },
+            onApprove : function(data, actions){
+                return actions.order.capture().then(function(details){
+                    console.log(details);
+                    if(details.status == 'COMPLETED'){
+                        window.location.href = `/payment-completed/{{order.oid}}/?status=${details.status}`
+                    }
+                })
+            }
+        }).render('#paypal-button-container');
+
+
+
+    </script>
+
+    
+    <script>
+        var stripe = Stripe("{{strip_publishable_key}}");
+        var checkoutButton = document.getElementById('checkout-button');
+        try {
+            checkoutButton.addEventListener('click', function () {
+                var email = "{{order.email}}";
+                checkoutButton.innerHTML = 'Processing...';
+                fetch('/api/create_checkout_session/{{order.oid}}/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email
+                    })
+                })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (session) {
+                    console.log(session);
+                    return stripe.redirectToCheckout({ sessionId: session.sessionId });
+                })
+                .then(function (result) {
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(`ERROR: ${error}`);
+                });
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    </script>
+    
+
+
+    {% endblock content %}

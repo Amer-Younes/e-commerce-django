@@ -1,0 +1,297 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load humanize %}
+{{ form.media }}
+{% block content %}
+
+
+<style>
+    .image-upload-card {
+        border: 2px dashed #dee2e6;
+        transition: border-color 0.3s ease;
+    }
+    
+    .image-upload-card.dragover {
+        border-color: #4154f1;
+        background-color: rgba(65, 84, 241, 0.05);
+    }
+
+    .drop-zone {
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .drop-content {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .image-thumbnail {
+        position: relative;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .image-thumbnail:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .preview-image {
+        border: 2px solid #4154f1;
+        padding: 3px;
+    }
+
+    .current-image {
+        border: 2px solid #dee2e6;
+        padding: 3px;
+        transition: transform 0.3s ease;
+    }
+
+    .current-image:hover {
+        transform: scale(1.03);
+    }
+</style>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between">
+            <h1>Edit Product</h1>
+            <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success mr-0"><i class="bi bi-plus-square"></i> Submit</button>
+        </div>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item">Products</li>
+                <li class="breadcrumb-item active">Edit Product</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Basic Information</h5>
+                        
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <strong>Oops!</strong> There was an error processing your request
+                                <ul>
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Product Title</label>
+                                {{ form.title }}
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Full Description</label>
+                                {{ form.description }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Selling Price</label>
+                                {{ form.price }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Old Price</label>
+                                {{ form.old_price }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Currency</label>
+                                <select class="form-select">
+                                    <option selected>USD</option>
+                                    <option>JOD</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Product Type</label>
+                                {{ form.type }}
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Stock Count</label>
+                                {{ form.stock_count }}
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Product Life</label>
+                                {{ form.life }}
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Manufactured Date</label>
+                                {{ form.mfd }}
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Tags</label>
+                                {{ form.tags }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <!-- Image Upload Card -->
+                <div class="col-lg-6">
+                    <div class="card image-upload-card">
+                        <div class="card-body">
+                            <!-- Drag & Drop Zone -->
+                            <div class="drop-zone" id="dropZone">
+                                <div class="drop-content">
+                                    <i class="bi bi-cloud-upload fs-1 text-primary"></i>
+                                    <h5 class="my-3">Drag & Drop Product Image</h5>
+                                    <p class="text-muted">or</p>
+                                    <label for="productImage" class="btn btn-primary btn-sm">
+                                        Browse Files
+                                    </label>
+                                    <input type="file" 
+                                           class="form-control d-none" 
+                                           id="productImage" 
+                                           name="image"
+                                           accept="image/*">
+                                </div>
+                            </div>
+                
+                            <!-- Image Preview -->
+                            <div class="image-preview-container mt-4">
+                                {% if product.image %}
+                                <div class="current-image-wrapper">
+                                    <p class="text-center mb-2 fw-semibold">Current Image</p>
+                                    <div class="image-thumbnail">
+                                        <img src="{{ product.image.url }}" 
+                                             alt="Current Product Image"
+                                             class="img-fluid rounded-3 shadow-sm current-image">
+                                        <div class="image-overlay">
+                                            <button type="button" 
+                                                    class="btn btn-danger btn-sm delete-image"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Remove current image">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                
+                                <div class="upload-preview mt-3 d-none">
+                                    <p class="text-center mb-2 fw-semibold">New Upload Preview</p>
+                                    <img id="imagePreview" 
+                                         class="img-fluid rounded-3 shadow-sm preview-image"
+                                         alt="Image preview">
+                                </div>
+                            </div>
+                
+                            <!-- Upload Details -->
+                            <div class="upload-details mt-3 text-center">
+                                <small class="text-muted">
+                                    Allowed formats: JPG, PNG, WEBP (Max 5MB)<br>
+                                    Recommended dimensions: 800×800px
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                
+                <!-- Category & Digital Status Card -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Category & Status</h5>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Product Category</label>
+                                {{ form.category }}
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-check form-switch">
+                                    {{ form.digital }}
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                                        Digital Product
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            </form>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
+
+
+<script>
+    // Drag & Drop Handling
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('productImage');
+    
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect(files[0]);
+        }
+    });
+
+    // File Input Change Handler
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+
+    // Image Preview Handler
+    function handleFileSelect(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.querySelector('.upload-preview').classList.remove('d-none');
+            document.getElementById('imagePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Delete Current Image Handler
+    document.querySelector('.delete-image')?.addEventListener('click', () => {
+        if (confirm('Are you sure you want to remove the current image?')) {
+            // Add logic to remove image from server
+            document.querySelector('.current-image-wrapper').remove();
+            fileInput.value = '';
+        }
+    });
+</script>
+
+{% endblock content %}

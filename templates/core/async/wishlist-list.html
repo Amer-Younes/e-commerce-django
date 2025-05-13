@@ -1,0 +1,25 @@
+﻿{% for wishlist in wishlist %}
+<tr class="pt-30">
+    <td class="custome-checkbox pl-30">
+        <input class="form-check-input" type="checkbox" name="checkbox" />
+        <label class="form-check-label"></label>
+    </td>
+    <td class="image product-thumbnail pt-40">
+        <img src="{{ wishlist.product.image.url }}" alt="#" />
+    </td>
+    <td class="product-des product-name">
+        <h6><a class="product-name mb-10" href="{% url 'core:product-detail' wishlist.product.id %}">{{ wishlist.product.title }}</a></h6>
+    </td>
+    <td class="price" data-title="Price">
+        <h5 class="text-brand">${{ wishlist.product.price }}</h5>
+    </td>
+    <td class="text-right add-cart" data-title="Cart">
+        <button class="btn btn-sm add add-to-cart-btn" data-index="{{ wishlist.product.id }}">Add to cart</button>
+    </td>
+    <td class="action text-center" data-title="Remove">
+        <a class="text-body delete-product-wishlist" data-product="{{ wishlist.product.id }}">
+            <i class="fi-rs-trash"></i>
+        </a>
+    </td>
+</tr>
+{% endfor %}

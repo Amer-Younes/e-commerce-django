@@ -1,0 +1,331 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+
+{% block content %}
+<main id="main" class="main">
+  <style>
+    .company-profile * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Header Styles */
+    .company-profile .go-back {
+      padding: 1rem 1.5rem;
+      color: #4caf50;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .company-profile .go-back:hover {
+      opacity: 0.8;
+    }
+
+    .company-profile .header-banner {
+      background: #ffca28;
+      padding: 2rem;
+      position: relative;
+      min-height: 160px;
+      margin-bottom: 100px;
+    }
+
+    .company-profile .logo-container {
+      background: white;
+      width: 180px;
+      height: 180px;
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .company-profile .company-info {
+      margin-left: 220px;
+      padding-top: 1rem;
+    }
+
+    .company-profile .company-name {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .company-profile .company-address {
+      font-size: 0.9rem;
+      color: #4a5568;
+    }
+
+    /* Stats Section */
+    .company-profile .stats-box {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .company-profile .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .company-profile .stats-label {
+      color: #718096;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .company-profile .stats-value {
+      color: #38a169;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* Products Table */
+    .company-profile .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 2rem 0;
+    }
+
+    .company-profile .products-table thead {
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .company-profile .products-table th {
+      padding: 1rem;
+      text-align: left;
+      color: #2d3748;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .company-profile .products-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #edf2f7;
+      color: #4a5568;
+      font-size: 0.9rem;
+    }
+
+    .company-profile .product-row:hover {
+      background: #f8fafc;
+    }
+
+    .company-profile .product-image-table {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .company-profile .product-price-table {
+      color: #4caf50;
+      font-weight: 600;
+    }
+
+    .company-profile .product-category-table {
+      background: #f7fafc;
+      color: #718096;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+
+    /* Pagination */
+    .company-profile .pagination {
+      display: flex;
+      gap: 0.5rem;
+      margin: 2rem 0;
+      justify-content: center;
+    }
+
+    .company-profile .page-item {
+      list-style: none;
+    }
+
+    .company-profile .page-link {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #4a5568;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .company-profile .page-link:hover {
+      background: #f8fafc;
+    }
+
+    .company-profile .page-item.active .page-link {
+      background: #4caf50;
+      border-color: #4caf50;
+      color: white;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .company-profile .header-banner {
+        padding: 1rem;
+        min-height: 120px;
+        margin-bottom: 80px;
+      }
+
+      .company-profile .logo-container {
+        width: 120px;
+        height: 120px;
+        top: 1rem;
+        left: 1rem;
+      }
+
+      .company-profile .company-info {
+        margin-left: 140px;
+      }
+
+      .company-profile .products-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .company-profile .products-table th,
+      .company-profile .products-table td {
+        padding: 0.75rem;
+      }
+      
+      .company-profile .product-image-table {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  </style>
+
+  <div class="company-profile">
+    <a href="{% url 'useradmin:dashboard' %}" class="go-back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"></path>
+      </svg>
+      Go back
+    </a>
+    
+    <header class="header-banner">
+      <div class="logo-container">
+        <img src="{{ request.user.profile.image.url }}" alt="Company Logo" class="img-fluid">
+      </div>
+      <div class="company-info">
+        <h1 class="company-name">{{ request.user.profile.full_name }}</h1>
+        <p class="company-address">{{ request.user.email }}</p>
+        <p class="company-address">{{ request.user.profile.bio }}</p>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="stats-box">
+        <div class="stats-grid">
+          <div>
+            <p class="stats-label">Total Sales</p>
+            <p class="stats-value">{{ total_sales.qty|default:"0" }}</p>
+          </div>
+          <div>
+            <p class="stats-label">Revenue</p>
+            <p class="stats-value">${{ revenue.price|floatformat:2 }}</p>
+          </div>
+        </div>
+      </div>
+
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            
+            <th>Price</th>
+            <th>Stock</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr class="product-row">
+            <td>
+              <img src="{{ product.image.url }}" 
+                   alt="{{ product.title }}" 
+                   class="product-image-table">
+            </td>
+            <td>{{ product.title }}</td>
+
+            <td class="product-price-table">
+              ${{ product.price|floatformat:2 }}
+              {% if product.old_price %}
+              <div style="color: #a0aec0; font-size: 0.8rem; text-decoration: line-through;">
+                ${{ product.old_price|floatformat:2 }}
+              </div>
+              {% endif %}
+            </td>
+            <td>
+              {% if product.in_stock %}
+              <span style="color: #38a169;">In Stock ({{ product.stock_quantity }})</span>
+              {% else %}
+              <span style="color: #e53e3e;">Out of Stock</span>
+              {% endif %}
+            </td>
+            
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem;">
+              No products found
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% if products.paginator.num_pages > 1 %}
+      <nav class="pagination">
+        <ul class="pagination-list">
+          {% if products.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ products.previous_page_number }}">&laquo;</a>
+          </li>
+          {% endif %}
+
+          {% for num in products.paginator.page_range %}
+            {% if products.number == num %}
+              <li class="page-item active">
+                <a class="page-link" href="#">{{ num }}</a>
+              </li>
+            {% else %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if products.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ products.next_page_number }}">&raquo;</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</main>
+{% endblock %}

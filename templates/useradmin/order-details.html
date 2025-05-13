@@ -1,0 +1,165 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between">
+            <h1>Order Details</h1>
+        </div>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Orders</a></li>
+                <li class="breadcrumb-item active">Details</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Details for Order ID: {{ order.id }}</h5>
+                        <p class="text-muted small mb-4">{{ order.order_date }}</p>
+
+                        <div class="row mb-4">
+                            <!-- Customer Info -->
+                            <div class="col-md-4">
+                                <div class="border p-3 rounded">
+                                    <h6>Customer</h6>
+                                    <hr class="mt-1">
+                                    <div class="mb-1"><strong>{{ order.full_name|title }}</strong></div>
+                                    <div class="mb-1">{{ order.email }}</div>
+                                    <div>{{ order.phone }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Shipping Info -->
+                            <div class="col-md-4">
+                                <div class="border p-3 rounded">
+                                    <h6>Deliver to</h6>
+                                    <hr class="mt-1">
+                                    <div class="mb-1">{{ order.address }}</div>
+                                    <div class="mb-1">{{ order.city }}, {{ order.state }}</div>
+                                    <div>{{ order.country }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Order Status -->
+                            <div class="col-md-4">
+                                <div class="border p-3 rounded">
+                                    <h6>Order Info</h6>
+                                    <hr class="mt-1">
+                                    <div class="mb-1">Order ID: #{{ order.id }}</div>
+                                    <div class="mb-1">Payment Status: 
+                                        {% if order.paid_status %}
+                                        <span class="badge bg-success">Paid</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Unpaid</span>
+                                        {% endif %}
+                                    </div>
+                                    <!-- Change all order.status references to order.product_status -->
+<div class="mb-1">Order Status:
+    <form method="POST" action="{% url 'useradmin:update_order_status' order.id %}">
+        {% csrf_token %}
+        <select name="status" class="form-select form-select-sm status-select 
+            {% if order.product_status == 'Delivered' %}bg-success
+            {% elif order.product_status == 'Pending' %}bg-warning
+            {% elif order.product_status == 'Processing' %}bg-info
+            {% elif order.product_status == 'Cancelled' %}bg-danger
+            {% endif %}" 
+            onchange="this.form.submit()">
+            <option value="Processing" {% if order.product_status == 'Processing' %}selected{% endif %}>Processing</option>
+            <option value="Shipped" {% if order.product_status == 'Shipped' %}selected{% endif %}>Shipped</option>
+            <option value="Delivered" {% if order.product_status == 'Delivered' %}selected{% endif %}>Delivered</option>
+            <option value="Cancelled" {% if order.product_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+    </form>
+</div>
+
+<!-- Update total price reference -->
+<tr class="fw-bold">
+    <td>Grand Total:</td>
+    <td>${{ order.price|floatformat:2 }}</td>
+</tr>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Table -->
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr>
+                                    <td><img src="{{ item.image }}" alt="{{ item.item }} " width="70px" height="70px"></td>
+                                    <td>{{ item.item|title }}</td>
+                                    <td>${{ item.price }}</td>
+                                    <td>{{ item.qty }}</td>
+                                    <td>${{ item.price|mul:item.qty|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <!-- Totals -->
+                        <div class="row justify-content-end">
+                            <div class="col-4">
+                                <table class="table table-sm table-borderless float-end">
+                                    <tr>
+                                        <td>Tax:</td>
+                                        <td>$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping:</td>
+                                        <td>$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Discount:</td>
+                                        <td>${{ order.saved|floatformat:2 }}</td>
+                                    </tr>
+                                    <tr class="fw-bold">
+                                        <td>Grand Total:</td>
+                                        <td>${{ order.price|floatformat:2 }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<style>
+.status-select {
+    color: white !important;
+    border: none !important;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.status-select:hover {
+    opacity: 0.9;
+}
+
+.status-select option {
+    background: white;
+    color: black;
+    padding: 8px 12px;
+}
+</style>
+{% endblock content %}

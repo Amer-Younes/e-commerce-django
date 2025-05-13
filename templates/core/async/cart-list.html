@@ -1,0 +1,216 @@
+
+
+{% load mathfilters %}
+
+
+    <main class="main" id="cart-list">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Shop
+                    <span></span> Cart
+                </div>
+            </div>
+        </div>
+        <div class="container mb-80 mt-50">
+            <div class="row">
+                <div class="col-lg-8 mb-40">
+                    <h1 class="heading-2 mb-10">Your Cart</h1>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-body">There are <span class="text-brand">{{totalCartItems}}</span> products in your cart</h6>
+                        <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Cart</a></h6>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="table-responsive shopping-summery">
+                        <table class="table table-wishlist">
+                            <thead>
+                                <tr class="main-heading">
+                                    <th class="custome-checkbox start pl-30">
+                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox11" value="">
+                                        <label class="form-check-label" for="exampleCheckbox11"></label>
+                                    </th>
+                                    <th scope="col" >Product</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Unit Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Subtotal</th>
+                                    <th scope="col" >Refresh</th>
+                                    <th scope="col" class="end">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for product_id ,item in cart_data.items %}
+                                <tr class="pt-30">
+                                    <td class="custome-checkbox pl-30">
+                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
+                                        <label class="form-check-label" for="exampleCheckbox1"></label>
+                                    </td>
+                                    <td class="image product-thumbnail pt-40"><img src="{{ item.image }}" alt="#"></td>
+                                    <td class="product-des product-name">
+                                        <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="{%url 'core:product-detail' item.pid%}">{{item.title}}</a></h6>
+                                        <div class="product-rate-cover">
+                                            <div class="product-rate d-inline-block">
+                                                <div class="product-rating" style="width:90%">
+                                                </div>
+                                            </div>
+                                            <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                        </div>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 class="text-body">${{item.price |floatformat:2}} </h4>
+                                    </td>
+                                    <td class="text-center detail-info" data-title="Stock">
+                                        <div class="detail-extralink mr-15">
+                                            <div class="detail-qty border radius">
+                                                {% comment %} <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a> {% endcomment %}
+                                                <input type="number" name="quantity" class="qty-val" value="{{item.qty}}" min="1">
+                                                {% comment %} <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a> {% endcomment %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="price" data-title="Price">
+                                        <h4 class="text-brand">${{ item.price|mul:item.qty|floatformat:2 }} </h4>
+                                    </td>
+                                    <td class="action text-center" data-title="Update"><button style="border: 0; background: none;" class="text-body update-product" data-product={{product_id}}><i class="fi-rs-refresh"></i></button></td>
+                                    <td class="action text-center" data-title="Remove"><button style="border: 0; background: none;" class="text-body delete-product" data-product={{product_id}}><i class="fi-rs-trash"></i></button></td>
+                                </tr>
+                                {% endfor %}
+                                    
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="divider-2 mb-30"></div>
+                    <div class="cart-action d-flex justify-content-between">
+                        <form method="POST" action="{% url 'core:save-checkout-info' %}">
+                            {% csrf_token %}
+                        
+                            <div class="row">
+                                <!-- Bio Data Section -->
+                                <div class="col-md-6">
+                                    <div class="card shadow-sm border-0 mb-4">
+                                        <div class="card-header text-white">
+                                            <h4 class="mb-0">Bio Data</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="fullName" class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" id="fullName" name="full_name" placeholder="Enter full name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="mobile" class="form-label">Mobile</label>
+                                                <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="Enter mobile number" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="address" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <!-- Shipping Details Section -->
+                                <div class="col-md-6">
+                                    <div class="card shadow-sm border-0 mb-4">
+                                        <div class="card-header text-white">
+                                            <h4 class="mb-0">Shipping Details</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="shippingAddress" class="form-label">Address</label>
+                                                <input type="text" class="form-control" id="shippingAddress" name="shipping_address" placeholder="Enter shipping address" required>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="city" class="form-label">City</label>
+                                                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter city" required>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="state" class="form-label">State</label>
+                                                    <input type="text" class="form-control" id="state" name="state" placeholder="Enter state" required>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="country" class="form-label">Country</label>
+                                                    <input type="text" class="form-control" id="country" name="country" placeholder="Enter country" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        
+                        
+                        
+                    </div>
+
+                </div>
+                <div class="col-lg-4">
+                    <div class="border p-md-4 cart-totals ml-30">
+                        <div class="table-responsive">
+                            <table class="table no-border">
+                                <tbody>
+                                    <tr>
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">Subtotal</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h4 class="text-brand text-end">${{cart_total_amount|floatformat:2}}</h4>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="col" colspan="2">
+                                            <div class="divider-2 mt-10 mb-10"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">Shipping</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h5 class="text-heading text-end">$0</h4></td> </tr> <tr>
+
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">Tax</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h5 class="text-heading text-end">$0</h4></td> </tr> <tr>
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">Discount</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h5 class="text-heading text-end">$0</h4></td> </tr> <tr>
+                                        <td scope="col" colspan="2">
+                                            <div class="divider-2 mt-10 mb-10"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">Total</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h4 class="text-brand text-end">${{cart_total_amount|floatformat:2}}</h4>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        {% if totalCartItems %}
+                            <button type="submit" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></button>
+                            
+                        {% endif %}
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+

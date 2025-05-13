@@ -1,0 +1,235 @@
+
+
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load humanize %}
+{{form.media}}
+{% block content %}
+
+
+
+<style>
+    #{{ form.image.id_for_label }} {
+        display: none; /* Hide default input field */
+    }
+    .upload-area {
+        width: 100%;
+        height: 200px;
+        border: 2px dashed #ccc;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .upload-area.dragover {
+        border-color: #007bff;
+        background: rgba(0, 123, 255, 0.1);
+    }
+</style>
+
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between">
+            <h1>Add New Product</h1>
+            <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success mr-0"><i class="bi bi-plus-square"></i> Publish</button>
+        </div>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item">Products</li>
+          <li class="breadcrumb-item active">add New Product</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Basic</h5>
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Oops!</strong> There was an error processing your request
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                    
+              <!-- Basic Form -->
+              <div class="row g-3">
+                <div class="col-md-12">
+                  <label for="inputName5" class="form-label">Product title</label>
+                  {{form.title}}
+                </div>
+                <div class="col-md-12">
+                  <label for="inputEmail5" class="form-label">Full description</label>
+                    {{form.description}}
+                </div>
+                <div class="col-md-4">
+                  <label for="inputName5" class="form-label">Selling Price</label>
+                  {{form.price}}
+                </div>
+                <div class="col-md-4">
+                    <label for="inputName5" class="form-label">Old Price</label>
+                    {{form.old_price}}
+                  </div>
+                  <div class="col-md-4">
+                    <label for="inputName5" class="form-label">Currency</label>
+                    <select id="inputState" class="form-select">
+                        <option selected>USD</option>
+                        <option>JOD</option>
+                      </select>
+                  </div>
+                  <div class="col-md-12">
+                    <label for="inputName5" class="form-label">Type</label>
+                    {{form.type}}
+                  </div>
+                  <div class="col-md-12">
+                    <label for="inputName5" class="form-label">Stock</label>
+                    {{form.stock_count}}
+                  </div>
+                  <div class="col-md-12">
+                    <label for="inputName5" class="form-label">Life Of Product</label>
+                    {{form.life}}
+                  </div>
+                  <div class="col-md-12">
+                    <label for="inputName5" class="form-label">Manufactured Date</label>
+                    {{form.mfd}}
+                  </div>
+
+                  <div class="col-md-12">
+                    <label for="inputName5" class="form-label">Tags</label>
+                    {{form.tags}}
+                  </div>
+
+                <div class="col-12">
+                  <div class="form-check">
+                    {{form.digital}}
+                    <label class="form-check-label" for="gridCheck">
+                      Digital Product
+                    </label>
+                  </div>
+                </div>
+                <div class="text-center">
+
+                </div>
+              </div><!-- Basic Form -->
+
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+          <div class="card p-4 shadow-lg rounded bg-white text-center">
+            <div class="card-body">
+              
+
+
+                
+                <label for="productImage" class="form-label fw-bold fs-5">Upload Product Image</label>
+                
+                <div class="upload-area border rounded position-relative d-flex flex-column align-items-center justify-content-center" 
+                id="dropArea">
+               
+               {{ form.image }}  <!-- Django Form Image Field -->
+               
+               <div class="preview-container text-center" id="imagePreview">
+                   <img src="" alt="Preview" id="previewImg" class="img-fluid d-none" style="max-height: 150px;">
+                   <span class="text-muted" id="previewText">Drag & Drop or Click to Upload</span>
+               </div>
+           </div>
+           
+           <button type="button" class="btn btn-outline-secondary mt-3" 
+                   onclick="document.getElementById('{{ form.image.id_for_label }}').click();">
+               Choose File
+           </button>
+            
+
+
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Others</h5>
+
+              <!-- No Labels Form -->
+              <div class="row g-3">
+                <div class="col-md-12">
+                    <label for="inputName5" class="form-label">Category</label>
+                    <select id="inputState" class="form-select">
+                        <option selected>food</option>
+                        <option>cosmatics</option>
+                      </select>
+                  </div>
+              </div><!-- End No Labels Form -->
+
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let dropArea = document.getElementById("dropArea");
+        let fileInput = document.getElementById("{{ form.image.id_for_label }}");
+        let previewImg = document.getElementById("previewImg");
+        let previewText = document.getElementById("previewText");
+
+        // Handle file selection
+        fileInput.addEventListener("change", function(event) {
+            let file = event.target.files[0];
+            if (file) {
+                previewImage(file);
+            }
+        });
+
+        // Drag & Drop Events
+        dropArea.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            dropArea.classList.add("dragover");
+        });
+
+        dropArea.addEventListener("dragleave", () => {
+            dropArea.classList.remove("dragover");
+        });
+
+        dropArea.addEventListener("drop", (event) => {
+            event.preventDefault();
+            dropArea.classList.remove("dragover");
+
+            let file = event.dataTransfer.files[0];
+            if (file) {
+                fileInput.files = event.dataTransfer.files; // Assign file to input
+                previewImage(file);
+            }
+        });
+
+        // Preview Image
+        function previewImage(file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewImg.classList.remove("d-none");
+                previewText.classList.add("d-none");
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+{% endblock content %}
